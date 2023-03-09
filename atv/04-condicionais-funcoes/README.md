@@ -11,7 +11,7 @@ Exercícios para entrega.
 - Prazo: https://insper.github.io/SistemasHardwareSoftware/sobre/
 - Para entregar a atividade, suba as alterações para o github e suba uma tag com o padrão de nomenclatura `atv4.x.y`, substituindo `x` e `y` por qualquer número inteiro! Ex:
 
-```
+```bash
 git tag -a atv4.0.5 -m "enviando a atv4.0.5"
 git push origin atv4.0.5
 ```
