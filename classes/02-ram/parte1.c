@@ -7,7 +7,7 @@ struct player {
     long score;
 };
 
-struct player one = {
+struct player one   = {
     2,
     20,
     "nome nome nome",
@@ -24,3 +24,4 @@ int main(int argc, char *argv[]) {
     printf("----\n&one:\t%p\n", &one);
     return 0;
 }
+

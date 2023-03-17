@@ -35,3 +35,71 @@ _example: in the number 0x12345678, the most significant byte is 0x12 and the le
 
 The most significant bit is the bit that is furthest to the left. The least significant bit is the bit that is furthest to the right.
 _example: in the number 0b1101, the most significant bit is 1 and the least significant bit is 1_
+
+## Tipos na RAM
+
+- Structs:
+  - Structs são armazenadas na memória de forma contígua
+  - A ordem dos campos é a ordem em que eles são declarados
+  - As variáveis de uma struct quando são declaradas são armazenadas em blocos de 8 em 8 bytes
+- Ponteiros:
+  - Ponteiros representam um endereço de memória
+  - O tamanho de um ponteiro é sempre o mesmo, independente do tipo apontado
+- Strings:
+  - Strings são armazenadas na memória de forma contígua
+  - A string termina com o caractere nulo `\0`
+  - O tamanho de uma string é sempre o tamanho da string + 1 (para o caractere nulo)
+
+## Comandos para o gdb
+
+- `info`: mostra informações sobre o programa
+  - `info registers`: mostra os valores dos registradores
+  - `info functions`: mostra as funções do programa
+  - `info variables`: mostra as variáveis do programa
+- `break`: define um breakpoint
+  - `break <function>`: define um breakpoint na função
+  - `break <line>`: define um breakpoint na linha
+  - `break <file>:<line>`: define um breakpoint no arquivo na linha
+  - `break *<address>`: define um breakpoint no endereço
+- `run`: executa o programa
+- `next`: executa a próxima linha
+- `step`: executa a próxima linha e entra na função se houver
+- `continue`: continua a execução do programa
+- `print <variable>`: imprime o valor da variável
+  - `print <variable>[<index>]`: imprime o valor da variável no índice
+  - `print <variable>.<field>`: imprime o valor do campo da variável
+  - `print <variable>-><field>`: imprime o valor do campo da variável
+- `x`: imprime o conteúdo de uma região de memória
+  - `x <number><type><format>`: imprime o conteúdo de uma região de memória
+    - `<number>`: número de elementos a serem impressos
+    - `<type>`: tipo dos elementos a serem impressos
+      - `b`: byte
+      - `h`: halfword
+      - `w`: word
+      - `g`: giantword
+    - `<format>`: formato de impressão
+      - `x`: hexadecimal
+      - `d`: decimal
+      - `u`: unsigned decimal
+      - `o`: octal
+      - `t`: binary
+      - `f`: float
+      - `a`: address
+      - `c`: char
+      - `s`: string
+      - `i`: instruction
+      - `z`: zero-terminated string
+      - `Z`: zero-terminated wide string
+      - `@`: dereference as address
+- `disassemble`: desmonta o código
+  - `disassemble <function>`: desmonta o código da função
+  - `disassemble <line>`: desmonta o código da linha
+  - `disassemble <file>:<line>`: desmonta o código do arquivo na linha
+- `set`: define uma variável
+  - `set $<register>=<value>`: define o valor do registrador
+  - `set $<register>[<index>]=<value>`: define o valor do registrador no índice
+  - `set $<register>.<field>=<value>`: define o valor do campo do registrador
+  - `set $<register>-><field>=<value>`: define o valor do campo do registrador
+  - `set $<register>-><field>[<index>]=<value>`: define o valor do campo do registrador no índice
+- `help`: mostra a ajuda
+  - `help <command>`: mostra a ajuda do comando
