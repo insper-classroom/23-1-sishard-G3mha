@@ -103,3 +103,94 @@ _example: in the number 0b1101, the most significant bit is 1 and the least sign
   - `set $<register>-><field>[<index>]=<value>`: define o valor do campo do registrador no índice
 - `help`: mostra a ajuda
   - `help <command>`: mostra a ajuda do comando
+
+## Instruções em assembly x86-64
+
+`lea` x `mov`: `lea` equivale em C a `p = &v[i]` enquanto `mov` equivale em C a `p = v[i]`
+
+- `lea`: apenas calcula o endereço de memória desejado
+  - efeito:  calcula o endereço especificado pelo operando Mem, e armazena em Dst
+  - `lea <Mem>, <Dst>`: carrega o endereço de `<source>` para `<destination>`
+    - `<Mem>`: operando de endereçamento da forma D(Rb, Ri, S)
+      - Exemplo: $0x4(%rax, %rbx, 4)
+      - Resultado: 4 + 4 * R[%rbx] + R[%rax]
+    - `<Dst>`: registrador de destino
+      - Exemplo: %rsi
+- `mov`: move um valor para um registrador
+  - `mov <source>, <destination>`: move o valor de `<source>` para `<destination>`
+    - `<source>`: valor a ser movido
+    - `<destination>`: registrador de destino
+- `add`: soma um valor a um registrador
+  - `add <source>, <destination>`: soma o valor de `<source>` ao valor de `<destination>` e escreve o resultado em `<destination>`
+    - `<source>`: valor a ser somado
+    - `<destination>`: registrador de destino
+
+- `ret`: retorna da função com o valor do registrador `eax`
+  - `ret`: retorna da função com o valor do registrador `eax`
+  - `ret <value>`: retorna da função com o valor `<value>`
+    - `<value>`: valor a ser retornado
+- `sub`: subtrai um valor de um registrador
+  - `sub <source>, <destination>`: subtrai o valor de `<source>` do valor de `<destination>`
+    - `<source>`: valor a ser subtraído
+    - `<destination>`: registrador de destino
+- `inc`: incrementa um registrador
+  - `inc <destination>`: incrementa o valor de `<destination>`
+    - `<destination>`: registrador de destino
+- `dec`: decrementa um registrador
+  - `dec <destination>`: decrementa o valor de `<destination>`
+    - `<destination>`: registrador de destino
+- `cmp`: compara dois valores
+  - `cmp <source>, <destination>`: compara o valor de `<source>` com o valor de `<destination>`
+    - `<source>`: valor a ser comparado
+    - `<destination>`: registrador de destino
+- `jmp`: salta para um endereço
+  - `jmp <address>`: salta para o endereço
+    - `<address>`: endereço de destino
+- `je`: salta para um endereço se o resultado da última comparação for igual
+  - `je <address>`: salta para o endereço se o resultado da última comparação for igual
+    - `<address>`: endereço de destino
+- `jne`: salta para um endereço se o resultado da última comparação for diferente
+  - `jne <address>`: salta para o endereço se o resultado da última comparação for diferente
+    - `<address>`: endereço de destino
+- `jg`: salta para um endereço se o resultado da última comparação for maior
+  - `jg <address>`: salta para o endereço se o resultado da última comparação for maior
+    - `<address>`: endereço de destino
+- `jge`: salta para um endereço se o resultado da última comparação for maior ou igual
+  - `jge <address>`: salta para o endereço se o resultado da última comparação for maior ou igual
+    - `<address>`: endereço de destino
+- `jl`: salta para um endereço se o resultado da última comparação for menor
+  - `jl <address>`: salta para o endereço se o resultado da última comparação for menor
+    - `<address>`: endereço de destino
+- `jle`: salta para um endereço se o resultado da última comparação for menor ou igual
+  - `jle <address>`: salta para o endereço se o resultado da última comparação for menor ou igual
+    - `<address>`: endereço de destino
+- `call`: chama uma função
+  - `call <function>`: chama a função
+    - `<function>`: função a ser chamada
+- (registrador1, registrador2, escala, deslocamento): endereço de memória
+  - `<registrador1>`: registrador base
+  - `<registrador2>`: registrador de índice
+  - `<escala>`: escala do registrador de índice
+  - `<deslocamento>`: deslocamento do endereço
+
+## Operandos
+
+- `Mem`: operando de endereçamento da forma D(Rb, Ri, S)
+  - Exemplo: $0x4(%rax, %rbx, 4)
+  - Resultado: 4 + 4 * R[%rbx] + R[%rax]
+- `Imm`: operando imediato
+  - Exemplo: $0x4
+- `Reg`: registrador
+  - Exemplo: %rax
+- Não é permitido operações do tipo Mem to Mem
+
+## Registradores
+
+- `rax`: registrador de retorno
+- Argumentos inteiros ou ponteiros são passados nos registradores (nesta ordem):
+  - `%rdi`
+  - `%rsi`
+  - `%rdx`
+  - `%rcx`
+  - `%r8`
+  - `%r9`
