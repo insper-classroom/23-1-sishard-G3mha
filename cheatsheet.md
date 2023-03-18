@@ -108,12 +108,27 @@ _example: in the number 0b1101, the most significant bit is 1 and the least sign
 
 `lea` x `mov`: `lea` equivale em C a `p = &v[i]` enquanto `mov` equivale em C a `p = v[i]`
 
+- incq D=>D = D + 1 # Incremento.
+- decq D=>D = D – 1 # Decremento.
+- negq D=>D = -D # Negativo.
+- notq D=>D = ~D # Operador “not” bit-a-bit.
+- addq S, D=>D = D + S
+- subq S, D=>D = D - S
+- imulq S, D=>D = D * S
+- salq S, D=>D = D << S # Tanto arit. como lógico.
+- sarq S, D=>D = D >> S # Aritmético.
+- shrq S, D=>D = D >> S # Lógico.
+- xorq S, D=>D = D ^ S
+- andq S, D=>D = D & S
+- orq S, D=>D = D | S
+- cmp S, D=> Compara S com D, como sub, mas não armazena o resultado.
+
 - `lea`: apenas calcula o endereço de memória desejado
   - efeito:  calcula o endereço especificado pelo operando Mem, e armazena em Dst
   - `lea <Mem>, <Dst>`: carrega o endereço de `<source>` para `<destination>`
     - `<Mem>`: operando de endereçamento da forma D(Rb, Ri, S)
       - Exemplo: $0x4(%rax, %rbx, 4)
-      - Resultado: 4 + 4 * R[%rbx] + R[%rax]
+      - Resultado: 0x4 + 4 * R[%rbx] + R[%rax]
     - `<Dst>`: registrador de destino
       - Exemplo: %rsi
 - `mov`: move um valor para um registrador
@@ -194,3 +209,10 @@ _example: in the number 0b1101, the most significant bit is 1 and the least sign
   - `%rcx`
   - `%r8`
   - `%r9`
+
+## Códigos de condição
+
+CF: Carry Flag => Resultado da operação não cabe no registrador UNSIGNED
+SF: Sign Flag => Resultado da operação é negativo
+OF: Overflow Flag => Resultado da operação não cabe no registrador SIGNED
+ZF: Zero Flag => Resultado da operação é zero
