@@ -139,7 +139,11 @@ _example: in the number 0b1101, the most significant bit is 1 and the least sign
   - `add <source>, <destination>`: soma o valor de `<source>` ao valor de `<destination>` e escreve o resultado em `<destination>`
     - `<source>`: valor a ser somado
     - `<destination>`: registrador de destino
-
+- `push` e `pop`: empilha e desempilha valores
+  - `push <source>`: empilha o valor de `<source>`
+    - `<source>`: valor a ser empilhado
+  - `pop <destination>`: desempilha o valor de `<destination>`
+    - `<destination>`: registrador de destino
 - `ret`: retorna da função com o valor do registrador `eax`
   - `ret`: retorna da função com o valor do registrador `eax`
   - `ret <value>`: retorna da função com o valor `<value>`
