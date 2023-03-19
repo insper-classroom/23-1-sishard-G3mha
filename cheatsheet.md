@@ -220,3 +220,11 @@ CF: Carry Flag => Resultado da operação não cabe no registrador UNSIGNED
 SF: Sign Flag => Resultado da operação é negativo
 OF: Overflow Flag => Resultado da operação não cabe no registrador SIGNED
 ZF: Zero Flag => Resultado da operação é zero
+
+## Tamanho e tipo dos registradores
+
+- 64 bits (%rax, %rdi e outros que começam com r): long, unsigned long ou ponteiro;
+- 32 bits (%eax, %edi e outros que começa com e e os que terminam em d como r10d): int ou unsigned int;
+- 16 bits (%ax, %di e outros com duas letras somente terminando em x): short ou unsigned short
+- 8 bits (%al, %ah e outros com duas letras terminando em h ou l): char ou unsigned char.
+- **endereços de memória: 32 bits**
