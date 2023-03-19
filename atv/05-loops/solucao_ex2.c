@@ -1,8 +1,3 @@
-/* Implemente aqui sua versão em C da função soma_n
- * presente no arquivo ex2.o
- *
- * Chame sua função de soma_n_solucao */
-
 // 0x0000000000000000 <+0>:     endbr64
 // 0x0000000000000004 <+4>:     mov    $0x0,%eax
 // 0x0000000000000009 <+9>:     mov    $0x0,%edx
