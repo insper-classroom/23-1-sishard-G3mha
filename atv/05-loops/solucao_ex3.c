@@ -23,7 +23,6 @@ long ex3_solucao(long rdi, long rsi, long rcx){
         if ((r8 % rsi) == 0){
             rax += rcx;
         }
-
         rcx++;
     }
     return rax;
