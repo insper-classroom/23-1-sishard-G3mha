@@ -53,11 +53,10 @@ int main(void) {
     int step = n/k;
     int final_interval = step-1;
     for (int i = 0; i < k; i++) {
-        int *v = malloc(step * sizeof(int));
         ifswv[i].step = step;
         ifswv[i].wanted = x;
         ifswv[i].retval = -1;
-        ifswv[i].vector = v;
+        ifswv[i].vector = malloc(step * sizeof(int));
         int e = 0;
         for (int j = initial_interval; j <= final_interval; j++) {
             ifswv[i].vector[e] = A[j];
@@ -79,7 +78,13 @@ int main(void) {
             it->thread_id = j;
             found = 1;
         }
+        free(ifswv[j].vector);
     }
     printf("Elemento %d encontrado pela thread %d no indice %d!\n", x, it->thread_id, it->index);
+    free(it);
+    free(tids);
+    free(ifswv);
+    free(A);
+    // valgrind --leak-check=yes ./finderThread < ./in/in50.txt
     return 0;
 }
