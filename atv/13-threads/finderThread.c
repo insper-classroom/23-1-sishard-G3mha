@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 
 typedef struct {
     int step;
@@ -18,6 +19,7 @@ typedef struct {
 
 void *find(void *arg) {
     // encontre índice da primeira ocorrência de um determinado número `x` em um vetor `A` de inteiros com `n` posições.
+    sleep(5);
     package_t *ifswv = (package_t *) arg;
     int step = ifswv->step;
     int wanted = ifswv->wanted;
