@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "curl.h": "c",
+        "key.h": "c",
+        "fcntl.h": "c",
+        "unistd.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "jansson.h": "c"
+    }
+}

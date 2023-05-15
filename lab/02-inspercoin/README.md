@@ -10,4 +10,4 @@ Seu programa deve compilar com:
 ```
 make rebuild
 ```
-E como resultado, deve gerar um executável `inspercoin`. Então, crie um makefile ou copie o contido no repositório de referência. 
+E como resultado, deve gerar um executável `inspercoin`. Então, crie um makefile ou copie o contido no repositório de referência.
