@@ -6,7 +6,8 @@ void broadcast_transaction(char *date_transaction,
                            unsigned char *address_to,
                            char *amount,
                            char *reward,
-                           unsigned char *signature);
+                           unsigned char *signature,
+                           char *url);
 void broadcast_block(
     unsigned char *hash,
     unsigned char *previous_hash,
@@ -30,7 +31,7 @@ int validate_block(char *date_transaction,
                    unsigned char *block_hash);
 char *format_amount(double amount);
 char *timestring();
-void send_money(char *amount, char *wallet, unsigned char *address_to, char *reward);
+void send_money(char *amount, char *wallet, unsigned char *address_to, char *reward, char *url);
 void mine_transaction();
 
 #endif

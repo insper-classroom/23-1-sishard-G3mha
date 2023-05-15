@@ -52,7 +52,8 @@ void broadcast_transaction(char *date_transaction,
                            unsigned char *address_to,
                            char *amount,
                            char *reward,
-                           unsigned char *signature)
+                           unsigned char *signature,
+                           char *url)
 {
     CURL *curl;
     CURLcode res;
@@ -63,8 +64,12 @@ void broadcast_transaction(char *date_transaction,
         char *args = malloc(COIN_ARGS_SIZE * sizeof(char));
 
         printf("\n\nSS: [%s]\n\n", signature);
-
-        sprintf(args, "http://sishard.insper-comp.com.br/inspercoin/broadcast/transaction?date_transaction=%s&address_from=%s&address_to=%s&amount=%s&reward=%s&signature=%s",
+        char *url_args = "broadcast/transaction?date_transaction=%s&address_from=%s&address_to=%s&amount=%s&reward=%s&signature=%s";
+        char *result_url = malloc(strlen(url) + strlen(url_args) + 1); // +1 for the null-terminator
+        // in real code you would check for errors in malloc here
+        strcpy(result_url, url);
+        strcat(result_url, url_args);
+        sprintf(args, result_url,
                 date_transaction,
                 address_from,
                 address_to,
@@ -105,7 +110,7 @@ unsigned char *construct_message(char *time_str, char *amount, unsigned char *ad
     message[MESSAGE_LEN - 1] = '\0';
     return (unsigned char *)message;
 }
-void send_money(char *amount, char *wallet, unsigned char *address_to, char *reward)
+void send_money(char *amount, char *wallet, unsigned char *address_to, char *reward, char *url)
 {
     double d_amount = atof(amount);
 
@@ -152,7 +157,8 @@ void send_money(char *amount, char *wallet, unsigned char *address_to, char *rew
                           (unsigned char *)address_to,
                           f_amount,
                           f_reward,
-                          sig_hex);
+                          sig_hex,
+                          url);
     free(f_amount);
     free(f_reward);
     free(address_from);

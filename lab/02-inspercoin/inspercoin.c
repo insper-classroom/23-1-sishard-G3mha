@@ -42,6 +42,7 @@ char *get_url(void)
 int main(int argc, char *argv[])
 {
     init_keyring_env();
+    char *url = get_url();
 
     if (argc == 4 &&
         strcmp(argv[1], "criar") == 0 &&
@@ -61,7 +62,8 @@ int main(int argc, char *argv[])
     {
         // ENVIAR GRANA
         // ./inspercoin enviar 0.01 da carteira rico para endereco 4B904AEACACD702908BF822AB1A0FBF0A571C3B2E38C22DD5D67DBC15993D1A7 com recompensa 0.001
-        send_money(argv[2], argv[5], (unsigned char *)argv[8], argv[11]);
+        send_money(argv[2], argv[5], (unsigned char *)argv[8], argv[11], url);
+        free(url);
     }
     else if (argc == 3 &&
              strcmp(argv[1], "minerar") == 0 &&
@@ -110,5 +112,6 @@ int main(int argc, char *argv[])
         printf("./inspercoin minear <qtde_t> transacoes em <qtde_t> processos\n");
     }
 
+    free(url);
     return 0;
 }
