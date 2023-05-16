@@ -35,14 +35,61 @@ char *get_url(void)
             read(file, &c2, 1);
         }
     }
+    realloc(url, strlen(url) + 1);
     close(file);
     return url;
+}
+
+char *get_default_wallet(void)
+{
+    int file = open("config.ic", O_RDONLY);
+    if (file == -1) {
+        printf("Arquivo de configuração não encontrado!\n");
+        exit(1);
+    }
+
+    int i = 0;
+    int bytes;
+    char each_char;
+    char label_found = 0;
+    char write_value = 0;
+    char *default_wallet = malloc(100 * sizeof(char));
+    while (1) {
+        bytes = read(file, &each_char, 1);
+        if (bytes == 0 || bytes == -1) {
+            break;
+        }
+        if (each_char == 'D') {
+            label_found = 1;
+            continue;
+        }
+        if (label_found) {
+            if (write_value) {
+                if (each_char == '\n') {
+                    write_value = 0;
+                    label_found = 0;
+                    continue;
+                }
+                default_wallet[i] = each_char;
+                i++;
+            }
+            if (each_char == '=') {
+                write_value = 1;
+                continue;
+            }
+        }
+    }
+    realloc(default_wallet, strlen(default_wallet) + 1);
+    close(file);
+    return default_wallet;
 }
 
 int main(int argc, char *argv[])
 {
     init_keyring_env();
     char *url = get_url();
+    char *default_wallet = get_default_wallet();
+
 
     if (argc == 4 &&
         strcmp(argv[1], "criar") == 0 &&
@@ -62,8 +109,7 @@ int main(int argc, char *argv[])
     {
         // ENVIAR GRANA
         // ./inspercoin enviar 0.01 da carteira rico para endereco 4B904AEACACD702908BF822AB1A0FBF0A571C3B2E38C22DD5D67DBC15993D1A7 com recompensa 0.001
-        send_money(argv[2], argv[5], (unsigned char *)argv[8], argv[11], url);
-        // free(url);
+        send_money(argv[2], default_wallet, (unsigned char *)argv[8], argv[11], url);
     }
     else if (argc == 3 &&
              strcmp(argv[1], "minerar") == 0 &&
@@ -113,5 +159,6 @@ int main(int argc, char *argv[])
     }
 
     free(url);
+    free(default_wallet);
     return 0;
 }
