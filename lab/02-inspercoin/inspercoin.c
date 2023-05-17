@@ -48,6 +48,7 @@ char *get_url(void)
             }
         }
     }
+    url[i++] = '\0';
     realloc(url, strlen(url) + 1);
     close(file);
     return url;
@@ -88,6 +89,7 @@ char *get_default_wallet(void)
             }
         }
     }
+    default_wallet[i++] = '\0';
     realloc(default_wallet, strlen(default_wallet) + 1);
     close(file);
     return default_wallet;
@@ -96,6 +98,16 @@ char *get_default_wallet(void)
 int main(int argc, char *argv[])
 {
     init_keyring_env();
+    // // abre o arquivo config.ic usando FILE
+    // FILE *file = fopen("config.ic", "r");
+
+    // // cria um json em branco
+    // json_t *config_json = json_object();
+
+    // // joga o conteúdo do arquivo config.ic para dentro do json
+    // json_error_t error;
+    // json_t *json = json_loadf(file, 0, &error);
+
     char *url = get_url();
     char *default_wallet = get_default_wallet();
 
