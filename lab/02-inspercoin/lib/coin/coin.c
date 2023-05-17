@@ -131,7 +131,7 @@ void send_money(char *amount, char *wallet, unsigned char *address_to, char *rew
     t_key *public_key = load_public_key(wallet);
 
     unsigned char *ps_hex = key_to_hex(private_key);
-    unsigned char *pb_hex = key_to_hex(private_key);
+    unsigned char *pb_hex = key_to_hex(public_key);
     printf("PRIVADA: [%s]\n", ps_hex);
     printf("PUBLICA: [%s]\n", pb_hex);
 
