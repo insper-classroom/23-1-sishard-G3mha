@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
         int status;
         for (int i = 0; i < qtde; i++) 
         {
-            wait(&status);
+            waitpid(-1, &status, 0);
         }
     }
     else if (argc == 8 &&

@@ -342,12 +342,11 @@ void mine_transaction(char *url_raw, char *wallet)
     json_t *json_array = parse_transaction(json_text, &n_transactions);
     // printf("NT %d\n", n_transactions); // qtde transações retornadas, descomente se quiser ver
 
-    unsigned char *address_from;
     long id_transaction;
     char *date_transaction;
     t_key *public_key = load_public_key(wallet);
     unsigned char *miner_address = key_to_hex(public_key);
-    printf("Address from: %s\n", address_from);
+    unsigned char *address_from;
     unsigned char *address_to;
     char *amount;
 
@@ -384,6 +383,12 @@ void mine_transaction(char *url_raw, char *wallet)
     }
     if (!flag_valid)
     {
+        free(date_transaction);
+        free(address_from);
+        free(address_to);
+        free(amount);
+        free(reward);
+        free(signature);
         printf("Não tem transação válida!\n");
         return;
     }
