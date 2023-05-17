@@ -23,16 +23,6 @@ struct response
     size_t size;
 };
 
-// cortesy of https://stackoverflow.com/questions/8465006/how-do-i-concatenate-two-strings-in-c
-char* concat(const char *s1, const char *s2)
-{
-    char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
-    // in real code you would check for errors in malloc here
-    strcpy(result, s1);
-    strcat(result, s2);
-    return result;
-}
-
 char *timestring()
 {
     time_t current_time;
@@ -101,7 +91,7 @@ void broadcast_transaction(char *date_transaction,
 
         // Clean up
         curl_easy_cleanup(curl);
-
+        // free(result_url);
         free(args);
     }
 }
@@ -118,6 +108,7 @@ unsigned char *construct_message(char *time_str, char *amount, unsigned char *ad
     message[MESSAGE_LEN - 1] = '\0';
     return (unsigned char *)message;
 }
+
 void send_money(char *amount, char *wallet, unsigned char *address_to, char *reward, char *url)
 {
     printf("Wallet: [%s]\n", wallet);
@@ -276,8 +267,9 @@ char *get_transaction(char *url)
 unsigned char *get_last_block_hash(char *url, char *wallet)
 {
     // Vai ter que alterar para chamar API!
-    char *url_final = concat(url, "blockchain/simple/1");
-    printf("URL: %s\n", url_final);
+    char *url_final = malloc(COIN_ARGS_SIZE * sizeof(char));
+    sprintf(url_final, "%sblockchain/simple/1", url);
+    printf("URL final: %s\n", url_final);
     char *json_text = get_transaction(url_final);
     size_t n_transaction;
     json_t *json_array = parse_transaction(json_text, &n_transaction);
@@ -323,8 +315,9 @@ unsigned char *get_block_hash(long nonce, unsigned char *previous_hash, char *ti
 
 void mine_transaction(char *url_raw, char *wallet)
 {
-    char *url = concat(url_raw, "transactions");
-    char *json_text = get_transaction(url);
+    char *url2 = malloc(COIN_ARGS_SIZE * sizeof(char));
+    sprintf(url2, "%stransactions", url_raw);
+    char *json_text = get_transaction(url2);
     // printf("\njson_text: %s\n\n", json_text); // Json text, descomente se quiser ver
 
     size_t n_transactions;
@@ -340,16 +333,47 @@ void mine_transaction(char *url_raw, char *wallet)
 
     char *reward;
     unsigned char *signature;
-
-    get_transaction_info(json_array,
-                         0,
-                         &id_transaction,
-                         &date_transaction,
-                         &address_from,
-                         &address_to,
-                         &amount,
-                         &reward,
-                         &signature);
+    char flag_valid = 0;
+    for (int i = 0; i < n_transactions; i++)
+    {
+        get_transaction_info(json_array,
+                             i,
+                             &id_transaction,
+                             &date_transaction,
+                             &address_from,
+                             &address_to,
+                             &amount,
+                             &reward,
+                             &signature);
+        // faz get do balance da address_from
+        sprintf(url2, "%sbalance/%s", url_raw, address_from);
+        printf("URL: %s\n", url2);
+        char *json_text = get_transaction(url2);
+        json_t *root = json_loads(json_text, 0, NULL);
+        printf("Root json: %s\n", json_dumps(root, JSON_ENCODE_ANY));
+        json_t *balance_json = json_array_get(root, 0);
+        printf("Balance json: %s\n", json_dumps(balance_json, JSON_ENCODE_ANY));
+        double balance = atof(json_string_value(json_object_get(balance_json, "balance")));
+        printf("Balance: %f\n", balance);
+        double amount_double = atof(amount);
+        printf("Amount: %f\n", amount_double);
+        double reward_double = atof(reward);
+        printf("Reward: %f\n", reward_double);
+        printf("Amount+reward: %f\n", (amount_double + reward_double));
+        if (balance >= (amount_double + reward_double))
+        {
+            printf("Balance suficiente!\n");
+            flag_valid = 1;
+            break;
+        }
+        printf("Balance insuficiente!\n");
+    }
+    if (!flag_valid)
+    {
+        printf("Não tem transação válida!\n");
+        return;
+    }
+    printf("Tem transação válida!\n");
     long nonce = 0;
     unsigned char *hash;
     int diffic = 5; // Você vai precisar alterar aqui para pegar a dificuldade pela API!
@@ -379,19 +403,17 @@ void mine_transaction(char *url_raw, char *wallet)
                     previous_hash,
                     address_from,
                     id_transaction,
-                    nonce);
+                    nonce,
+                    url_raw);
 
     free(json_text);
     free(json_array);
     // free(previous_hash);
     free(amount);
-    free(reward);
-    free(signature);
     free(date_transaction);
     free(address_from);
     free(address_to);
     free(public_key);
-    free(url);
 }
 
 void broadcast_block(
@@ -399,10 +421,13 @@ void broadcast_block(
     unsigned char *previous_hash,
     unsigned char *miner_address,
     long id_transaction,
-    long nonce)
+    long nonce,
+    char *url_raw)
 {
     CURL *curl;
     CURLcode res;
+
+    printf("URL: %s\n", url_raw);
 
     char *str_nouce = malloc(30);
     sprintf(str_nouce, "%020ld", nonce);
@@ -414,7 +439,8 @@ void broadcast_block(
         printf("ID [%ld]\n", id_transaction);
 
         // Vai precisar alterar esta URL!
-        sprintf(args, "http://sishard.insper-comp.com.br/inspercoin/broadcast/block?hash_=%s&previous_hash=%s&miner_address=%s&id_transaction=%ld&nonce=%s",
+        sprintf(args, "%sbroadcast/block?hash_=%s&previous_hash=%s&miner_address=%s&id_transaction=%ld&nonce=%s",
+                url_raw,
                 hash,
                 previous_hash,
                 miner_address,
@@ -430,6 +456,7 @@ void broadcast_block(
 
         if (res != CURLE_OK)
         {
+            printf("4\n");
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
                     curl_easy_strerror(res));
         }

@@ -13,7 +13,8 @@ void broadcast_block(
     unsigned char *previous_hash,
     unsigned char *miner_address,
     long id_transaction,
-    long nonce);
+    long nonce,
+    char *url_raw);
 int validate_transaction(char *date_transaction,
                          char *amount,
                          unsigned char *address_from,
