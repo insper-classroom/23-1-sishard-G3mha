@@ -150,7 +150,6 @@ int main(int argc, char *argv[])
     {
         // ./inspercoin minear transacao
         mine_transaction(url, default_wallet);
-        printf("Pokemon");
     }
     else if (argc == 6 &&
              strcmp(argv[1], "minerar") == 0 &&
