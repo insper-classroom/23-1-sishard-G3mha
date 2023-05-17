@@ -54,6 +54,7 @@ void broadcast_transaction(char *date_transaction,
                            unsigned char *signature,
                            char *url)
 {
+    printf("URL 1: [%s]\n", url);
     CURL *curl;
     CURLcode res;
 
@@ -72,8 +73,7 @@ void broadcast_transaction(char *date_transaction,
                 amount,
                 reward,
                 signature);
-
-        printf("\n\nURL : [%s]\n\n", args);
+        printf("URL 2: [%s]\n", args);
         curl_easy_setopt(curl, CURLOPT_URL, args);
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
@@ -146,6 +146,7 @@ void send_money(char *amount, char *wallet, unsigned char *address_to, char *rew
 
     unsigned char *sig_hex = signature_to_hex(signature);
     printf("SIG: [%s]\n------------------------------------------\n", sig_hex);
+    printf("URL 3: [%s]\n", url);
 
     broadcast_transaction(date_transaction,
                           address_from,
@@ -232,6 +233,7 @@ write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 char *get_transaction(char *url)
 {
+    printf("URL 4: [%s]\n", url);
 
     CURL *curl;
     CURLcode res;
@@ -260,24 +262,44 @@ char *get_transaction(char *url)
     return chunk.memory;
 }
 
-unsigned char *get_last_block_hash(char *url, char *wallet)
+unsigned char *get_last_block_hash(char *url_raw)
 {
-    // Vai ter que alterar para chamar API!
+    CURL *curl;
+    CURLcode res;
+    struct response chunk = {.memory = malloc(0),
+                             .size = 0};
     char *url_final = malloc(COIN_ARGS_SIZE * sizeof(char));
-    sprintf(url_final, "%sblockchain/simple/1", url);
-    printf("URL final: %s\n", url_final);
-    char *json_text = get_transaction(url_final);
-    size_t n_transaction;
-    json_t *json_array = parse_transaction(json_text, &n_transaction);
-    json_t *transaction = json_array_get(json_array, n_transaction - 1);
-    char *hash = json_string_value(json_object_get(transaction, "hash"));
-    printf("Hash: %s\n", hash);
+    sprintf(url_final, "%sblockchain/1", url_raw);
+    
+    curl = curl_easy_init();
+    if (curl){
+        curl_easy_setopt(curl, CURLOPT_URL, url_final);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK)
+        {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            exit(EXIT_FAILURE);
+        }
+
+        curl_easy_cleanup(curl);
+    }
+    json_error_t error;
+    json_t *root = json_loads(chunk.memory, 0, &error);
+    json_t *block = json_array_get(root, 0);
+    json_t *hash = json_object_get(block, "hash");
+    char *hash_string = (char *) malloc(strlen(json_string_value(hash)));
+    strcpy(hash_string, json_string_value(hash));
+    json_decref(hash);
+    json_decref(block);
+    json_decref(root);
     free(url_final);
-    free(json_text);
-    free(json_array);
-    free(transaction);
-    return (unsigned char *)hash; 
+    return (unsigned char *) hash_string;
 }
+
 
 unsigned char *construct_block_message(char *str_nouce, unsigned char *previous_hash, char *time_str, char *amount, unsigned char *address_from, unsigned char *address_to, char *reward)
 {
@@ -346,16 +368,10 @@ void mine_transaction(char *url_raw, char *wallet)
         printf("URL: %s\n", url2);
         char *json_text = get_transaction(url2);
         json_t *root = json_loads(json_text, 0, NULL);
-        printf("Root json: %s\n", json_dumps(root, JSON_ENCODE_ANY));
         json_t *balance_json = json_array_get(root, 0);
-        printf("Balance json: %s\n", json_dumps(balance_json, JSON_ENCODE_ANY));
         double balance = atof(json_string_value(json_object_get(balance_json, "balance")));
-        printf("Balance: %f\n", balance);
         double amount_double = atof(amount);
-        printf("Amount: %f\n", amount_double);
         double reward_double = atof(reward);
-        printf("Reward: %f\n", reward_double);
-        printf("Amount+reward: %f\n", (amount_double + reward_double));
         if (balance >= (amount_double + reward_double))
         {
             printf("Balance suficiente!\n");
@@ -374,7 +390,7 @@ void mine_transaction(char *url_raw, char *wallet)
     unsigned char *hash;
     int diffic = 5; // Você vai precisar alterar aqui para pegar a dificuldade pela API!
     int go_on = 1;
-    unsigned char *previous_hash = get_last_block_hash(url_raw, wallet);
+    unsigned char *previous_hash = get_last_block_hash(url_raw);
     while (go_on)
     {
         hash = get_block_hash(nonce, previous_hash, date_transaction, amount, address_from, address_to, reward);
