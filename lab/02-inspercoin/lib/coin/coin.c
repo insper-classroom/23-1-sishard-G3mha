@@ -92,7 +92,6 @@ void broadcast_transaction(char *date_transaction,
 
         // Perform the request and capture the response
         res = curl_easy_perform(curl);
-
         if (res != CURLE_OK)
         {
             free(args);
@@ -121,8 +120,8 @@ unsigned char *construct_message(char *time_str, char *amount, unsigned char *ad
 }
 void send_money(char *amount, char *wallet, unsigned char *address_to, char *reward, char *url)
 {
+    printf("Wallet: [%s]\n", wallet);
     double d_amount = atof(amount);
-
     char *f_amount = format_amount(d_amount);
 
     double d_reward = atof(reward);
