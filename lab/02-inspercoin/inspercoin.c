@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
         // ./inspercoin enviar <valor> para endereco <chave_publica_destino> com recompensa <valor_recompensa>
         // ./0          1      2       3    4        5                       6   7          8
         printf("default_wallet: %s\n", default_wallet);
-        send_money(argv[2], default_wallet, (unsigned char *)argv[5], argv[7], url);
+        send_money(argv[2], default_wallet, (unsigned char *)argv[5], argv[8], url);
     }
     else if (argc == 3 &&
              strcmp(argv[1], "minerar") == 0 &&
