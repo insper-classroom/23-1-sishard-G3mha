@@ -63,12 +63,9 @@ void broadcast_transaction(char *date_transaction,
         char *args = malloc(COIN_ARGS_SIZE * sizeof(char));
 
         printf("\n\nSS: [%s]\n\n", signature);
-        char *url_args = "broadcast/transaction?date_transaction=%s&address_from=%s&address_to=%s&amount=%s&reward=%s&signature=%s";
-        char *result_url = malloc(strlen(url) + strlen(url_args) + 1); // +1 for the null-terminator
-        // in real code you would check for errors in malloc here
-        strcpy(result_url, url);
-        strcat(result_url, url_args);
-        sprintf(args, result_url,
+        sprintf(args, 
+                "%sbroadcast/transaction?date_transaction=%s&address_from=%s&address_to=%s&amount=%s&reward=%s&signature=%s",
+                url,
                 date_transaction,
                 address_from,
                 address_to,
@@ -91,7 +88,6 @@ void broadcast_transaction(char *date_transaction,
 
         // Clean up
         curl_easy_cleanup(curl);
-        // free(result_url);
         free(args);
     }
 }
@@ -122,7 +118,7 @@ void send_money(char *amount, char *wallet, unsigned char *address_to, char *rew
     t_key *public_key = load_public_key(wallet);
 
     unsigned char *ps_hex = key_to_hex(private_key);
-    unsigned char *pb_hex = key_to_hex(public_key);
+    unsigned char *pb_hex = key_to_hex(private_key);
     printf("PRIVADA: [%s]\n", ps_hex);
     printf("PUBLICA: [%s]\n", pb_hex);
 
