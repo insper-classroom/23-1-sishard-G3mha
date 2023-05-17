@@ -12,6 +12,8 @@
 #include <curl/curl.h>
 #include "lib/key/key.h"
 #include "lib/coin/coin.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 char *get_url(void)
 {
@@ -152,6 +154,28 @@ int main(int argc, char *argv[])
     {
         // ./inspercoin minerar transacao na carteira <carteira>
         mine_transaction(url, argv[5]);
+    }
+    else if (argc == 4 &&
+             strcmp(argv[1], "minerar") == 0 &&
+             strcmp(argv[3], "transacoes") == 0)
+    {
+        // ./inspercoin minerar <qtde> transacoes
+        //   0          1      2      3
+        int qtde = atoi(argv[2]);
+        for (int i = 0; i < qtde; i++) 
+        {
+            pid_t pid = fork();
+            if (pid == 0)
+            {
+                mine_transaction(url, default_wallet);
+                return 0;
+            }
+        }
+        int status;
+        for (int i = 0; i < qtde; i++) 
+        {
+            wait(&status);
+        }
     }
     else if (argc == 8 &&
              strcmp(argv[1], "verificar") == 0)
