@@ -1,1 +1,65 @@
-http://sishard.insper-comp.com.br/inspercoin/broadcast/transaction?date_transaction=20230517143337&address_from=6F528C2AA108DEA13D2A991E00CDC67DAA7288FCB917A1BDDC5AEC32EEFFB62F&address_to=00000.27758&amount=02524.83693&reward=00000.00000&signature=8803306A9CD4D059FA565B12818663D1C2B7CB0A944D4D2DC1E60C5FEB890AFFBE9B6E0C0D63B0603AED866FFE8DAAB19C496011411501618137174BCEE71A01
+char *get_url(void)
+{
+    int file = open("config.ic", O_RDONLY);
+
+    int i = 0;
+    int bytes;
+    char each_char;
+    char label_found = 0;
+    char write_value = 0;
+    char *url = malloc(100 * sizeof(char));
+    while (1) {
+        bytes = read(file, &each_char, 1);
+        if (bytes == 0 || bytes == -1) {
+            break;
+        }
+        if (each_char == 'I') {
+            label_found = 1;
+            continue;
+        }
+        if (label_found) {
+            if (write_value) {
+                if (each_char == '\n') {
+                    write_value = 0;
+                    label_found = 0;
+                    continue;
+                }
+                url[i] = each_char;
+                i++;
+            }
+            if (each_char == '=') {
+                write_value = 1;
+                continue;
+            }
+        }
+    }
+    realloc(url, strlen(url) + 1);
+    close(file);
+    return url;
+}
+
+// old one 
+
+char *get_url(void)
+{
+    int file = open("config.ic", O_RDONLY);
+
+    char c[16];
+    char *url = malloc(100 * sizeof(char));
+    char c2;
+    read(file, &c, 16);
+    char *c3 = "INSPER_COIN_URL=";
+    if (strncmp(c, c3, 16) == 0) {
+        int i = 0;
+        char newline = '\n';
+        read(file, &c2, 1);
+        while (c2 != newline) {
+            url[i] = c2;
+            i++;
+            read(file, &c2, 1);
+        }
+    }
+    realloc(url, strlen(url) + 1);
+    close(file);
+    return url;
+}
