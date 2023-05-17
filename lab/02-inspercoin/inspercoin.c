@@ -98,18 +98,11 @@ char *get_default_wallet(void)
 int main(int argc, char *argv[])
 {
     init_keyring_env();
-    // // abre o arquivo config.ic usando FILE
-    // FILE *file = fopen("config.ic", "r");
-
-    // // cria um json em branco
-    // json_t *config_json = json_object();
-
-    // // joga o conteúdo do arquivo config.ic para dentro do json
-    // json_error_t error;
-    // json_t *json = json_loadf(file, 0, &error);
 
     char *url = get_url();
     char *default_wallet = get_default_wallet();
+    printf("url: %s\n", url);
+    printf("default_wallet: %s\n", default_wallet);
 
     if (argc == 4 &&
         strcmp(argv[1], "criar") == 0 &&
@@ -148,7 +141,7 @@ int main(int argc, char *argv[])
              strcmp(argv[1], "minerar") == 0 &&
              strcmp(argv[2], "transacao") == 0)
     {
-        // ./inspercoin minear transacao
+        // ./inspercoin minerar transacao
         mine_transaction(url, default_wallet);
     }
     else if (argc == 6 &&
@@ -157,7 +150,7 @@ int main(int argc, char *argv[])
              strcmp(argv[3], "na") == 0 &&
              strcmp(argv[4], "carteira") == 0)
     {
-        // ./inspercoin minear transacao na carteira <carteira>
+        // ./inspercoin minerar transacao na carteira <carteira>
         mine_transaction(url, argv[5]);
     }
     else if (argc == 8 &&

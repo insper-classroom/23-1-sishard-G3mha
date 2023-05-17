@@ -342,10 +342,12 @@ void mine_transaction(char *url_raw, char *wallet)
     json_t *json_array = parse_transaction(json_text, &n_transactions);
     // printf("NT %d\n", n_transactions); // qtde transações retornadas, descomente se quiser ver
 
+    unsigned char *address_from;
     long id_transaction;
     char *date_transaction;
     t_key *public_key = load_public_key(wallet);
-    unsigned char *address_from = key_to_hex(public_key);
+    unsigned char *miner_address = key_to_hex(public_key);
+    printf("Address from: %s\n", address_from);
     unsigned char *address_to;
     char *amount;
 
@@ -411,9 +413,10 @@ void mine_transaction(char *url_raw, char *wallet)
 
     printf("Minerou %ld\n%s\n", nonce, hash);
 
+    printf("address_fromXXXXXXXXX: %s\n", address_from);
     broadcast_block(hash,
                     previous_hash,
-                    address_from,
+                    miner_address,
                     id_transaction,
                     nonce,
                     url_raw);
