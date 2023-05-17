@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
     char *url = get_url();
     char *default_wallet = get_default_wallet();
 
-
     if (argc == 4 &&
         strcmp(argv[1], "criar") == 0 &&
         strcmp(argv[2], "carteira") == 0)
@@ -102,16 +101,34 @@ int main(int argc, char *argv[])
     {
         // ENVIAR GRANA
         // ./inspercoin enviar 0.01 da carteira rico para endereco 4B904AEACACD702908BF822AB1A0FBF0A571C3B2E38C22DD5D67DBC15993D1A7 com recompensa 0.001
-        
         send_money(argv[2], argv[5], (unsigned char *)argv[8], argv[11], url);
+    }
+    else if (argc == 9 &&
+             strcmp(argv[1], "enviar") == 0 &&
+             strcmp(argv[3], "para") == 0 &&
+             strcmp(argv[4], "endereco") == 0 &&
+             strcmp(argv[6], "com") == 0 &&
+             strcmp(argv[7], "recompensa") == 0)
+    {
+        // ENVIAR GRANA de default wallet
+        // ./inspercoin enviar <valor> para endereco <chave_publica_destino> com recompensa <valor_recompensa>
+        send_money(argv[2], default_wallet, (unsigned char *)argv[8], argv[11], url);
     }
     else if (argc == 3 &&
              strcmp(argv[1], "minerar") == 0 &&
              strcmp(argv[2], "transacao") == 0)
     {
-        // mine_transaction() receives the 
-        mine_transaction();
-        // vai precisar alterar porque não pega da carteira padrão nem pega URl do arquivo de configuração!
+        // ./inspercoin minear transacao
+        mine_transaction(url, default_wallet);
+    }
+    else if (argc == 6 &&
+             strcmp(argv[1], "minerar") == 0 &&
+             strcmp(argv[2], "transacao") == 0 &&
+             strcmp(argv[3], "na") == 0 &&
+             strcmp(argv[4], "carteira") == 0)
+    {
+        // ./inspercoin minear transacao na carteira <carteira>
+        mine_transaction(url, argv[5]);
     }
     else if (argc == 8 &&
              strcmp(argv[1], "verificar") == 0)
@@ -147,9 +164,11 @@ int main(int argc, char *argv[])
         printf("USAGE:\n");
         printf("./inspercoin criar carteira <name_carteira>\n");
         printf("./inspercoin enviar <valor> da carteira <carteira> para endereco <endereco>\n");
-        printf("./inspercoin minear transacao\n");
-        printf("./inspercoin minear <qtde> transacoes\n");
-        printf("./inspercoin minear <qtde_t> transacoes em <qtde_t> processos\n");
+        printf("./inspercoin enviar <valor> para endereco <endereco>\n");
+        printf("./inspercoin minerar transacao\n");
+        printf("./inspercoin minerar transacao na carteira <carteira>\n");
+        printf("./inspercoin minerar <qtde> transacoes\n");
+        printf("./inspercoin minerar <qtde_t> transacoes em <qtde_t> processos\n");
     }
 
     free(url);

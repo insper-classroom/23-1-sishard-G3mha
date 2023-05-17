@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <jansson.h>
+#include <sodium.h>
+#include <curl/curl.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include "coin.h"
+#include "key.h"
+#include <unistd.h> //sleep
 #include <fcntl.h>  //open
 
 char *get_default_wallet(void)
@@ -49,8 +57,12 @@ char *get_default_wallet(void)
 }
 
 int main(void) {
-    char *default_wallet = get_default_wallet();
-    printf("default_wallet: %s\n", default_wallet);
-    free(default_wallet);
+    char *wallet = get_default_wallet();
+    t_key *public_key = load_public_key(wallet);
+    unsigned char *address_from = key_to_hex(public_key);
+    printf("address_from: %s\n", address_from);
+    printf("default_wallet: %s\n", wallet);
+    free(wallet);
+    free(address_from);
     return 0;
 }

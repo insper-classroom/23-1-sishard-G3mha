@@ -23,6 +23,15 @@ struct response
     size_t size;
 };
 
+// cortesy of https://stackoverflow.com/questions/8465006/how-do-i-concatenate-two-strings-in-c
+char* concat(const char *s1, const char *s2)
+{
+    char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
+    // in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
 
 char *timestring()
 {
@@ -235,15 +244,13 @@ write_callback(void *contents, size_t size, size_t nmemb, void *userp)
     return realsize;
 }
 
-char *get_transaction()
+char *get_transaction(char *url)
 {
 
     CURL *curl;
     CURLcode res;
     struct response chunk = {.memory = malloc(0),
                              .size = 0};
-
-    char *url = "http://sishard.insper-comp.com.br/inspercoin/transactions"; // Você vai precisar alterar aqui!
 
     curl = curl_easy_init();
 
@@ -267,10 +274,22 @@ char *get_transaction()
     return chunk.memory;
 }
 
-unsigned char *get_last_block_hash()
+unsigned char *get_last_block_hash(char *url, char *wallet)
 {
     // Vai ter que alterar para chamar API!
-    return (unsigned char *)"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+    char *url_final = concat(url, "blockchain/simple/1");
+    printf("URL: %s\n", url_final);
+    char *json_text = get_transaction(url_final);
+    size_t n_transaction;
+    json_t *json_array = parse_transaction(json_text, &n_transaction);
+    json_t *transaction = json_array_get(json_array, n_transaction - 1);
+    char *hash = json_string_value(json_object_get(transaction, "hash"));
+    printf("Hash: %s\n", hash);
+    free(url_final);
+    free(json_text);
+    free(json_array);
+    free(transaction);
+    return (unsigned char *)hash; 
 }
 
 unsigned char *construct_block_message(char *str_nouce, unsigned char *previous_hash, char *time_str, char *amount, unsigned char *address_from, unsigned char *address_to, char *reward)
@@ -303,11 +322,10 @@ unsigned char *get_block_hash(long nonce, unsigned char *previous_hash, char *ti
     return hex_hash;
 }
 
-void mine_transaction()
+void mine_transaction(char *url_raw, char *wallet)
 {
-    // Você vai precisar alterar aqui!
-    unsigned char miner_address[65] = "4B904AEACACD702908BF822AB1A0FBF0A571C3B2E38C22DD5D67DBC15993D1A7";
-    char *json_text = get_transaction();
+    char *url = concat(url_raw, "transactions");
+    char *json_text = get_transaction(url);
     // printf("\njson_text: %s\n\n", json_text); // Json text, descomente se quiser ver
 
     size_t n_transactions;
@@ -316,7 +334,8 @@ void mine_transaction()
 
     long id_transaction;
     char *date_transaction;
-    unsigned char *address_from;
+    t_key *public_key = load_public_key(wallet);
+    unsigned char *address_from = key_to_hex(public_key);
     unsigned char *address_to;
     char *amount;
 
@@ -336,7 +355,7 @@ void mine_transaction()
     unsigned char *hash;
     int diffic = 5; // Você vai precisar alterar aqui para pegar a dificuldade pela API!
     int go_on = 1;
-    unsigned char *previous_hash = get_last_block_hash();
+    unsigned char *previous_hash = get_last_block_hash(url_raw, wallet);
     while (go_on)
     {
         hash = get_block_hash(nonce, previous_hash, date_transaction, amount, address_from, address_to, reward);
@@ -359,7 +378,7 @@ void mine_transaction()
 
     broadcast_block(hash,
                     previous_hash,
-                    miner_address,
+                    address_from,
                     id_transaction,
                     nonce);
 
@@ -372,6 +391,8 @@ void mine_transaction()
     free(date_transaction);
     free(address_from);
     free(address_to);
+    free(public_key);
+    free(url);
 }
 
 void broadcast_block(
