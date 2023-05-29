@@ -3,65 +3,6 @@
 // para compilar use
 // gcc -g -Og -Wall sort.o solucao.c -o sort -pthread
 
-/*
-#include <stdlib.h>
-#include <pthread.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include "sort-merge.h"
-
-void * sort(void *args);
-
-int main(int nArgs, char **argv)
-{   
-    int nThreads, nItens;
-    FILE *fp;
-    if(nArgs != 4)
-        return -1;
-
-    nThreads = atoi(argv[1]);
-    nItens   = atoi(argv[2]);
-
-    fp = fopen(argv[3],"r");
-    if( !fp ){
-        printf("Erro ao abrir arquivo: %s\n",argv[3]);
-        return -1;
-    }
-    printf("Serao criadas %d threads.\n",nThreads);
-    fflush(stdout);
-
-    pthread_t *tids = malloc(nThreads * sizeof(pthread_t));
-
-    struct sort_args *vet_sort = malloc(nThreads * sizeof(struct sort_args));
-    pthread_mutex_t mutex_file = PTHREAD_MUTEX_INITIALIZER;
-
-    for (int i = 0; i < nThreads; i++) {
-        vet_sort[i].idxThread = i;
-        vet_sort[i].nThreads = nThreads;
-        vet_sort[i].lineFiles = nItens;
-        vet_sort[i].mutex_file = &mutex_file;
-        vet_sort[i].fp = fp;
-        pthread_create(&tids[i], NULL, sort, &vet_sort[i]);
-        printf("Criou thread:%d fase sort\n", i);
-    }
-
-    printf("Funcao main() espera as threads sort finalizarem...\n");
-    fflush(stdout);
-    FILE **fpOut = malloc(nThreads*sizeof(FILE));
-    for (int i = 0; i < nThreads; i++) {
-        pthread_join(tids[i], (void**)&fpOut[i]);
-        fclose(fpOut[i]);   
-    }
-    fclose(fp);
-    free(vet_sort);
-    free(tids);
-    free(fpOut);
-    printf("Funcao main() finalizando normalmente...\n");
-
-    return 0;
-}
-*/
 
 void * sort(void * args) {
     struct sort_args *arg = (struct sort_args *) args;
