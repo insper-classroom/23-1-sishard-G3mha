@@ -3,11 +3,12 @@
 // para compilar use
 // gcc -g -Og -Wall sort.o solucao.c -o sort -pthread
 
-
 void * sort(void * args) {
     struct sort_args *arg = (struct sort_args *) args;
     int idxThread = arg->idxThread;
     int lineFiles = arg->lineFiles / arg->nThreads;
+    // lock no file
+    pthread_mutex_lock(arg->mutex_file);
     FILE *fp = arg->fp;
     rewind(fp);
     char *str = malloc(30 * sizeof(char));
@@ -43,6 +44,8 @@ void * sort(void * args) {
         fprintf(fpOut, "%s\n", vet[i]);
         free(vet[i]);
     }
+    // unlock no file
+    pthread_mutex_unlock(arg->mutex_file);
     free(str);
     free(name);
     free(vet);
