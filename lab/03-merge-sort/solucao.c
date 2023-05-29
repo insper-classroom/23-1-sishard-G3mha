@@ -41,8 +41,10 @@ void * sort(void * args) {
     FILE *fpOut = fopen(name, "w");
     for (int i = 0; i < lineFiles; i++) {
         fprintf(fpOut, "%s\n", vet[i]);
+        free(vet[i]);
     }
     free(str);
     free(name);
+    free(vet);
     return fpOut;
 }
