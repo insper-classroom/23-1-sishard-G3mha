@@ -129,12 +129,13 @@ char *read_word(int fd)
             free(retval);
             return NULL;
         }
-        i++;
         if ((c == ' ') || (bytes == 0))
         {
+            retval[i] = '\0';
             return retval;
         }
-        sprintf(retval, "%s%c", retval, c);
+        retval[i] = c;
+        i++;
     }
 }
 

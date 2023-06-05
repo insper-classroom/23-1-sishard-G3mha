@@ -33,7 +33,13 @@ int processa_linhas(int qt_linhas)
         brilha_brilha_estrelinha();
         printf("PROCESSOU A LINHA %d\n", linha_proc);
         fflush(stdout);
+        if
     }
+}
+
+void exporter() 
+{
+    int fd = open("q3_status.txt", O_TRUNC); // Abre o arquivo
 }
 
 // Crie AQUI a função que exporta o valor de `linha_proc` para um arquivo chamado q3_status.txt
