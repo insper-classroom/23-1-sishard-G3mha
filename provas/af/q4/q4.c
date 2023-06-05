@@ -17,6 +17,7 @@ typedef struct
     int id_thread;   // identificador da thread
     int *count_ceps; // para as threads saberem onde guardar o resultado!
     int file_desc;   // descritor do arquivo
+    pthread_mutex_t *mutex_file;
 } t_arg;
 
 /*
@@ -83,8 +84,9 @@ void *cep_validation_thread(void *_arg)
     while (1)
     {
         // Tenta ler uma palavra do arquivo
+        pthread_mutex_lock(arg->mutex_file);
         char *palavra = read_word(arg->file_desc);
-
+        pthread_mutex_unlock(arg->mutex_file);
         if (palavra == NULL)
         {
             // FUNCAO read_word NAO IMPLEMENTADA OU FINAL DO ARQUIVO!
@@ -95,6 +97,7 @@ void *cep_validation_thread(void *_arg)
         fflush(stdout);
 
         int ret = validade_cep(palavra);
+        free(palavra);
         if (ret == 0)
         {
             *arg->count_ceps = *arg->count_ceps + 1;
@@ -114,8 +117,23 @@ void *cep_validation_thread(void *_arg)
  */
 char *read_word(int fd)
 {
-    // Implemente AQUI!
-    return NULL;
+    char c;
+    int bytes;
+    char *retval = malloc(100 * sizeof(char));
+    while (1)
+    {
+        bytes = read(fd, &c, 1);
+        if (bytes == 0) 
+        {
+            free(retval);
+            return NULL;
+        }
+        if (c == ' ' || c == '\n')
+        {
+            return retval;
+        }
+        sprintf(retval, "%s%c", retval, c);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -143,6 +161,7 @@ int main(int argc, char *argv[])
     // Aloca espaço para tids e args das threads
     pthread_t *tids = malloc(sizeof(pthread_t) * n_threads);
     t_arg **args = malloc(sizeof(t_arg *) * n_threads);
+    pthread_mutex_t mutex_file = PTHREAD_MUTEX_INITIALIZER;
 
     for (int i = 0; i < n_threads; i++)
     {
@@ -151,6 +170,7 @@ int main(int argc, char *argv[])
         arg->file_desc = fd1; // Thread recebe o file descriptor
         arg->count_ceps = &count_ceps;
         arg->id_thread = i;
+        arg->mutex_file = &mutex_file;
         args[i] = arg;
 
         pthread_create(&tids[i], NULL, cep_validation_thread, arg);
@@ -160,12 +180,14 @@ int main(int argc, char *argv[])
     for (int i = 0; i < n_threads; i++)
     {
         pthread_join(tids[i], NULL);
+        free(args[i]);
         printf("THREAD %02d TERMINOU\n", i);
     }
 
     printf("RESULTADO:\nFORAM ENCONTRADOS %02d CEPS VALIDOS\n", count_ceps);
 
     close(fd1);
+    free(args);
     free(tids);
 
     return 0;
