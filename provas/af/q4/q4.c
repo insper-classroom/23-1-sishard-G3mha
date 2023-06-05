@@ -120,15 +120,17 @@ char *read_word(int fd)
     char c;
     int bytes;
     char *retval = malloc(100 * sizeof(char));
+    int i = 0;
     while (1)
     {
         bytes = read(fd, &c, 1);
-        if (bytes == 0) 
+        if ((bytes == 0) && (i == 0))
         {
             free(retval);
             return NULL;
         }
-        if (c == ' ' || c == '\n')
+        i++;
+        if ((c == ' ') || (bytes == 0))
         {
             return retval;
         }
