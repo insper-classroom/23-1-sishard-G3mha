@@ -6,11 +6,11 @@
 //    0x0000000000000018 <+14>:    lea    (%rax,%rdi,4),%eax
 //    0x000000000000001b <+17>:    ret
 
-int solucao(int edi, long rsi, long *rdx) {
-    int eax = 5*rsi;
+int solucao(int edi, int rsi, int *rdx) {
+    int eax = 4 * rsi + rsi;
     eax += edi;
-    *rdx= (long) eax;
-    eax = 3*rsi;
-    eax = 4*edi + eax;
-    return eax;
+    *rdx = eax;
+    eax = 2 * rsi + rsi;
+    int rax = 4 * edi + eax;
+    return rax;
 }

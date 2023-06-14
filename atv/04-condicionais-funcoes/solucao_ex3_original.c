@@ -13,12 +13,12 @@
 
 void solucao_ex3(long rdi, long rsi, int *rdx, int *rcx, int *r8){
     char al = rdi < rsi;
-    int eax = (int)al;
-    *rdx = eax; // por conta do movzbl, o valor deve ser de 32-bit, ou seja, int
+    int eax = (int) al;
+    *rdx = eax;
     al = rdi == rsi;
-    eax = (int)al;
+    eax = (int) al;
     *rcx = eax;
     al = rdi > rsi;
-    eax = (int)al;
+    eax = (int) al;
     *r8 = eax;
 }

@@ -17,13 +17,14 @@ long vezes2(long a);
 // 0x0000000000001131 <+8>:     ret
 
 long solucao_ex2(long rdi, long rsi) {
-    long rbx;
-    rbx = rdi;
+    long rbx = rdi;
     rdi = rsi;
     long rax = vezes2(rdi);
-    if (rax <= rbx) goto line24;
+    if (rax <= rbx) {
+        goto label;
+    }
     rbx += rbx;
-    line24:
+    label:
     rax += rbx;
     return rax;
 }

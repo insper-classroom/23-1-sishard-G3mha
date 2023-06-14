@@ -9,15 +9,13 @@
 // 0x000000000000001d <+29>:    movzbl %al,%eax
 // 0x0000000000000020 <+32>:    ret
 
-int solucao_ex1(long rdi, long rsi, long rdx) {
-    long rax = rsi + rdi;
-    long rcx = 4*rdx + rax;
+int solucao_ex1(int rdi, int rsi, int rdx, int rcx) {
+    int rax = rsi + rdi;
+    rcx = 4 * rdx + rax;
     rdi *= rdi;
-    rax = 2*rsi + rdi;
+    rax = 2 * rsi + rdi;
     rdx += rax;
-    if (rcx >= rdx) {
-        rax = 1;
-        return (int)rax;
-    }
-    return 0;
+    int al = rcx >= rdx;
+    int eax = al;
+    return eax;
 }

@@ -12,19 +12,23 @@
 // 0x000000000000001f <+31>:    mov    $0xffffffff,%eax
 // 0x0000000000000024 <+36>:    ret
 
-int solucao_ex4(short di, int esi) {
+int solucao_ex4(short di, int esi){
     int eax;
-    if (di <= 0x11) goto line23;
+    if (di <= 0x11){
+        goto label1;
+    }
     esi -= 0x41;
     unsigned char sil = (unsigned char) esi;
-    if (sil > 0x1) goto line31;
-    eax = (int)(di) - 0x11;
+    if (sil > 0x1){
+        goto label2;
+    }
+    eax = di - 0x11;
     return eax;
-    line23:
+    label1:
     eax = 0x12;
-    eax -= (int)di;
+    eax -= (int) di;
     return eax;
-    line31:
+    label2:
     eax = 0xffffffff;
     return eax;
 }
