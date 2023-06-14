@@ -11,16 +11,17 @@
 // 0x0000000000000020 <+32>:    ret
 
 long soma_n_solucao(int edi){
-    long rcx;
     int eax = 0x0;
     long rdx = 0x0;
-    line14:
-    if (eax >= edi) goto line29;
-    rcx = (long)eax;
+    label0:
+    if (eax >= edi){
+        goto label1;
+    }
+    long rcx = (long) eax;
     rdx += rcx;
-    eax += 0x1;
-    goto line14;
-    line29:
+    eax++;
+    goto label0;
+    label1:
     long rax = rdx;
     return rax;
 }

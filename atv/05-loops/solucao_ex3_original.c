@@ -15,21 +15,15 @@
 // 0x000000000000002c <+44>:    mov    %r8,%rax
 // 0x000000000000002f <+47>:    ret
 
-long ex3_solucao(long rdi, long rsi){
-    int ecx = 0x0;
-    long rcx = (long) ecx;
-    long r8 = 0x0;
-    long rax;
-    goto line21;
-    line17:
-    rcx += 0x1;
-    line21:
-    if (rcx >= rdi) goto line44;
-    rax = rcx;
-    if ((rax % rsi) != 0) goto line17;
-    r8 += rcx;
-    goto line17;
-    line44:
-    rax = r8;
+long ex3_solucao(long rdi, long rsi, long rcx){
+    long rax = 0;
+    long r8;
+    while (rcx < rdi){
+        r8 = rcx;
+        if ((r8 % rsi) == 0){
+            rax += rcx;
+        }
+        rcx++;
+    }
     return rax;
 }
